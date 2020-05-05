@@ -1,0 +1,64 @@
+---
+title: "Final Project"
+author: "Shisham Adhikari and Jacob Goldsmith"
+insurancee: "5/1/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, eval=TRUE}
+api_key <- "e20f7e545ee9474d9d353d401cc0e1d00d31deeb"
+```
+
+#Getting insurancea
+```{r, warning=FALSE}
+library(tidycensus)
+library(tigris)
+library(ggplot2)
+library(dplyr)
+insurance10 <- get_acs("county", 
+                 table = "B27001",
+                 year = 2018, 
+                 output = "tidy", 
+                 state = NULL, 
+                 geometry = TRUE, 
+                 shift_geo = TRUE,
+                  key = api_key, 
+                  cache_table = TRUE)
+```
+
+```{r}
+library(tidyr)
+insurance <- mutate(insurance10,
+  req = case_when(
+    variable %in% paste0("B27001_0",
+      c("09","12","15","37","40","43")) ~ "pop18_44",
+    variable %in% paste0("B27001_0",
+      c("11","14","17","39","42","45")) ~ "pop1844uni")) %>%
+  filter(!is.na(req))
+```
+
+```{r}
+insurance <- group_by(insurance, GEOID, NAME, req) %>%
+  summarize(estimate = sum(estimate)) %>%
+  ungroup() %>%
+  tidyr::spread(req, estimate) 
+
+insurance <- mutate(insurance, uninsured_percent = (pop1844uni/pop18_44) * 100) %>%
+  select(-c(pop18_44, pop1844uni)) 
+```
+
+```{r}
+ggplot(data = insurance, mapping = aes(geometry = geometry,
+                                fill = uninsured_percent)) + 
+  geom_sf() +
+  coord_sf() +
+  scale_fill_viridis_c() + theme_void()
+```
+
+
