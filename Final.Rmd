@@ -68,12 +68,20 @@ comb <- inner_join(insurance, covid_county, by = c("NAME" = "Countyname"))
 ```{r}
 library(viridis)
 library(leaflet.extras)
-pal <- colorNumeric(palette = "viridis", domain = insurance$uninsured_percent)
-insurance%>%
+pal <- colorNumeric(palette = "viridis", domain = comb$uninsured_percent)
+
+content <- paste(
+  comb$NAME, '<br>',
+  "Confirmed Cases: ",
+  comb$Confirmed, '<br>',
+  "Deaths: ",
+  comb$Deaths)
+  
+comb %>%
   sf::st_transform(crs = "+init=epsg:4326") %>%
   leaflet() %>%
    addProviderTiles(provider = "CartoDB.Positron") %>%
-  addPolygons(popup = ~NAME, fillColor = ~pal(uninsured_percent),
+  addPolygons(popup = content, fillColor = ~pal(uninsured_percent),
               stroke = FALSE, fillOpacity = 0.9,  smoothFactor = 0) %>%
   addLegend("bottomright", pal = pal, 
             values = ~uninsured_percent, title = "Uninsured Percentage of 18-44yrs",
