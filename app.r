@@ -8,11 +8,11 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Introduction", tabName = "introduction", icon = icon("dashboard")),
-      menuItem("US Health Insurance", tabName = "US County-Wise Health Insurance Coverage", icon = icon("hospital")),
-      menuItem("US COVID19", tabName = "US County-wise COVID19 Cases", icon = icon("ambulance")),
-      menuItem("Correlation", tabName = "Correlation between Insurance and COVID Cases", icon = icon("chart-line")),
-      menuItem("More Readings and Sources", tabName = "More readings and sources", icon = icon("newspaper")),
-      menuItem("Source code", tabName="Source code", icon = icon("file-code-o"))
+      menuItem("US Health Insurance", tabName = "health", icon = icon("hospital")),
+      menuItem("US COVID19", tabName = "covid", icon = icon("ambulance")),
+      menuItem("Correlation", tabName = "corr", icon = icon("chart-line")),
+      menuItem("More Readings and Sources", tabName = "readings", icon = icon("newspaper")),
+      menuItem("Source code", tabName="source", icon = icon("file-code-o"))
     )
   ),
   ## Body content
@@ -59,22 +59,22 @@ in all the counties in the US. We can also look at an interactive chart showing 
               )
               ),
       
-      tabItem(tabName = "US County-Wise Health Insurance Coverage",
+      tabItem(tabName = "health",
           h2("hell0")
               
       ),
       
-      tabItem(tabName = "US County-wise COVID19 Cases",
+      tabItem(tabName = "covid",
               h1("COVID19")
         
       ),
       
-      tabItem(tabName = "Correlation between Insurance and COVID Cases",
+      tabItem(tabName = "corr",
               h1("hello")
       ),
       
       
-      tabItem(tabName = "Source code",
+      tabItem(tabName = "source",
               h1("Code"))
     )
     
