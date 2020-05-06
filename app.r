@@ -23,7 +23,7 @@ ui <- dashboardPage(
                   div(
                     tags$img(src ="https://www.evaluate.com/sites/default/files/media/images/teasers/Virus%20Image.jpeg",
                              width = "120px", height = "120px", class="WrapText", align="right", style=" border: 1px solid #ddd;border-radius: 4px; padding: 4px; margin-left: 5px;margin-bottom: 0px;"),
-                    h1("COVID19 in the US", align="center"),
+                    h2("COVID19 and the Health System in the US", align="center"),
                     tags$p(
                       "The COVID-19, also known as the coronavirus is the ongoing",
                       HTML(paste0(tags$a(href = "https://en.wikipedia.org/wiki/COVID-19_pandemic", "pandemic", target = "_blank"))),
