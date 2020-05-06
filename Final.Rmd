@@ -18,9 +18,12 @@ api_key <- "e20f7e545ee9474d9d353d401cc0e1d00d31deeb"
 #Getting insurancea
 ```{r, warning=FALSE}
 library(tidycensus)
-library(tigris)
+library(tidyverse)
+library(leaflet)
+library(glue)
 library(ggplot2)
 library(dplyr)
+library(sf)
 insurance10 <- get_acs("county", 
                  table = "B27001",
                  year = 2018, 
@@ -54,8 +57,16 @@ insurance <- mutate(insurance, uninsured_percent = (pop1844uni/pop18_44) * 100) 
 ```
 
 ```{r}
+covid_county <- read_csv("https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/JHU_USCountymap/df_Counties2020.csv")
+covid_county <- covid_county %>%
+  filter(dt == "2020-05-04") %>%
+  mutate(Countyname = glue('{Countyname} County, {ST_Name}'))
+
+comb <- inner_join(insurance, covid_county, by = c("NAME" = "Countyname"))
+```
+
+```{r}
 library(viridis)
-library(leaflet)
 library(leaflet.extras)
 pal <- colorNumeric(palette = "viridis", domain = insurance$uninsured_percent)
 insurance%>%
@@ -68,5 +79,7 @@ insurance%>%
             values = ~uninsured_percent, title = "Uninsured Percentage of 18-44yrs",
             opacity = 1)
 ```
+
+
 
 
