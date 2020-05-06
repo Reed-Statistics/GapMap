@@ -27,7 +27,7 @@ insurance10 <- get_acs("county",
                  output = "tidy", 
                  state = NULL, 
                  geometry = TRUE, 
-                 shift_geo = TRUE,
+                 shift_geo =TRUE,
                   key = api_key, 
                   cache_table = TRUE)
 ```
@@ -54,11 +54,19 @@ insurance <- mutate(insurance, uninsured_percent = (pop1844uni/pop18_44) * 100) 
 ```
 
 ```{r}
-ggplot(data = insurance, mapping = aes(geometry = geometry,
-                                fill = uninsured_percent)) + 
-  geom_sf() +
-  coord_sf() +
-  scale_fill_viridis_c() + theme_void()
+library(viridis)
+library(leaflet)
+library(leaflet.extras)
+pal <- colorNumeric(palette = "viridis", domain = insurance$uninsured_percent)
+insurance%>%
+  sf::st_transform(crs = "+init=epsg:4326") %>%
+  leaflet() %>%
+   addProviderTiles(provider = "CartoDB.Positron") %>%
+  addPolygons(popup = ~NAME, fillColor = ~pal(uninsured_percent),
+              stroke = FALSE, fillOpacity = 0.9,  smoothFactor = 0) %>%
+  addLegend("bottomright", pal = pal, 
+            values = ~uninsured_percent, title = "Uninsured Percentage of 18-44yrs",
+            opacity = 1)
 ```
 
 
