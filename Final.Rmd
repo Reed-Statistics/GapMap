@@ -19,8 +19,12 @@ api_key <- "e20f7e545ee9474d9d353d401cc0e1d00d31deeb"
 ```{r, warning=FALSE}
 library(tidycensus)
 library(tigris)
+library(tidyverse)
+library(leaflet)
+library(glue)
 library(ggplot2)
 library(dplyr)
+library(sf)
 insurance10 <- get_acs("county", 
                  table = "B27001",
                  year = 2018, 
@@ -54,11 +58,42 @@ insurance <- mutate(insurance, uninsured_percent = (pop1844uni/pop18_44) * 100) 
 ```
 
 ```{r}
-ggplot(data = insurance, mapping = aes(geometry = geometry,
+covid_county <- read_csv("https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/JHU_USCountymap/df_Counties2020.csv")
+covid_county <- covid_county %>%
+  filter(dt == "2020-05-04") %>%
+  mutate(Countyname = glue('{Countyname} County, {ST_Name}'))
+
+comb <- inner_join(insurance, covid_county, by = c("NAME" = "Countyname"))
+```
+
+```{r}
+ggplot(data = comb, mapping = aes(geometry = geometry,
                                 fill = uninsured_percent)) + 
   geom_sf() +
   coord_sf() +
-  scale_fill_viridis_c() + theme_void()
+  geom_sf_text(aes(label = glue('Confirmed: {Confirmed}, Deaths: {Deaths}'))) +
+  scale_fill_viridis_c() + 
+  theme_void()
+```
+
+```{r}
+mypalette <- colorQuantile(n = 5, palette='viridis', domain=NULL, 
+                      na.color="transparent")
+
+interactive <- leaflet(comb) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~mypalette(uninsured_percent),
+              fillOpacity = 0.7,
+              color = "white",
+              highlight = highlightOptions(
+                color = "black",
+                bringToFront = TRUE
+              ),
+              label = ~uninsured_percent) #%>%
+  #addPopups(data = comb, popup = glue('Confirmed: {Confirmed}, Deaths: {Deaths}'))
+
+interactive
+  
 ```
 
 
