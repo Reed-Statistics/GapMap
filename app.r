@@ -1,6 +1,14 @@
 library(shiny)
 library(shinydashboard)
 library(shinythemes)
+library(tidycensus)
+library(tidyverse)
+library(tidyr)
+library(leaflet)
+library(glue)
+library(sf)
+library(viridis)
+library(leaflet.extras)
 
 ui <- dashboardPage(
   skin = "purple",
@@ -65,12 +73,27 @@ in all the counties in the US. We can also look at an interactive chart showing 
       ),
       
       tabItem(tabName = "covid",
-              h1("COVID19")
-        
+              h1("US COVID-19"),
+                   box(title = "COVID-19 Cases and Health Insurance Coverage in US Counties", 
+                       status = "primary", 
+                       leafletOutput("map_covid"),
+                       width = 10)
+                     #  checkboxInput("datatype", label = "Absolute numbers or by population?",
+                                  #   choices = c("Absolute Numbers", "By Population"),
+                                   #  selected = "By Population"))
       ),
       
       tabItem(tabName = "corr",
-              h1("hello")
+              h1("Correlation"),
+               box(title = "COVID-19 Cases and Deaths versus Health Insurance Coverage in US Counties", 
+                  status = "primary", 
+                  plotOutput("corr"),
+                  width = 10,
+                  selectInput("cases_or_deaths", label = "Confirmed Cases or Deaths",
+                                choices = c("Cases", "Deaths"),
+                                selected = "Deaths", multiple = FALSE),
+                  sliderInput("howmany", label = "Counties with at least how many cases",
+                               1, 100, 50))
       ),
       
       
@@ -82,6 +105,46 @@ in all the counties in the US. We can also look at an interactive chart showing 
   
 )# end dashboardPage
 
-server <- function(input, output) { }
+server <- function(input, output) {
+  comb <- st_read("covid.shp")
+  pal <- colorNumeric(palette = "viridis", domain = comb$uninsured_percent)
+  
+  content <- paste(
+    comb$NAME, '<br>',
+    "Confirmed Cases: ",
+    comb$Confrmd, '<br>',
+    "Deaths: ",
+    comb$Deaths)
+  
+  output$map_covid <- renderLeaflet({
+    comb %>%
+    sf::st_transform(crs = "+init=epsg:4326") %>%
+    leaflet() %>%
+    addProviderTiles(provider = "CartoDB.Positron") %>%
+    addPolygons(popup = content, fillColor = ~pal(unnsrd_),
+                stroke = FALSE, fillOpacity = 0.9,  smoothFactor = 0) %>%
+    addLegend("bottomright", pal = pal, 
+              values = ~unnsrd_, title = "Uninsured Percentage of 18-44yrs",
+              opacity = 1)
+  })
+  
+  comb_reactive <- reactive ({ 
+    comb %>%
+    mutate(deaths_or_cases = case_when(
+      input$cases_or_deaths == "Cases" ~ Confrmd,
+      input$cases_or_deaths == "Deaths" ~ Deaths,
+    )) %>%
+    filter(Confrmd > input$howmany)
+  })
+  
+  output$corr <- renderPlot({
+    
+      ggplot(data = comb_reactive(), mapping = aes(x = unnsrd_, y = deaths_or_cases)) +
+      geom_point(alpha = 0.7) +
+      xlab("Uninsured Percentage") +
+      ylab(input$cases_or_deaths) +
+      geom_smooth(method = "lm")
+  })
+}
 
 shinyApp(ui, server)

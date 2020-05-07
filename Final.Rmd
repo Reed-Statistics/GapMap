@@ -63,6 +63,7 @@ covid_county <- covid_county %>%
   mutate(Countyname = glue('{Countyname} County, {ST_Name}'))
 
 comb <- inner_join(insurance, covid_county, by = c("NAME" = "Countyname"))
+st_write(comb, "covid.shp")
 ```
 
 ```{r}
@@ -86,6 +87,13 @@ comb %>%
   addLegend("bottomright", pal = pal, 
             values = ~uninsured_percent, title = "Uninsured Percentage of 18-44yrs",
             opacity = 1)
+```
+```{r}
+comb %>%
+  filter(Confrmd > 10) %>%
+ggplot(mapping = aes(x = unnsrd_, y = Deaths)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm")
 ```
 
 
