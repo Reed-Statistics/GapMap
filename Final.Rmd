@@ -33,6 +33,16 @@ insurance10 <- get_acs("county",
                  shift_geo =TRUE,
                   key = api_key, 
                   cache_table = TRUE)
+total_pop <- get_acs("county", 
+                 table = "B01003",
+                 year = 2018, 
+                 output = "tidy", 
+                 state = NULL, 
+                 geometry = TRUE, 
+                 shift_geo =TRUE,
+                  key = api_key, 
+                  cache_table = TRUE)
+
 ```
 
 ```{r}
@@ -61,7 +71,10 @@ covid_county <- read_csv("https://raw.githubusercontent.com/govex/COVID-19/maste
 covid_county <- covid_county %>%
   filter(dt == "2020-05-04") %>%
   mutate(Countyname = glue('{Countyname} County, {ST_Name}'))
-
+total_pop <- as.data.frame(total_pop) %>%
+  select(-geometry,-moe,-variable,-GEOID) %>%
+  rename("total_pop"=estimate)
+insurance <-  inner_join(insurance, total_pop, by = c("NAME" = "NAME"))
 comb <- inner_join(insurance, covid_county, by = c("NAME" = "Countyname"))
 st_write(comb, "covid.shp")
 ```
