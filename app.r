@@ -78,10 +78,10 @@ ui <- dashboardPage(
               box(title = "COVID-19 Cases and Health Insurance Coverage in US Counties", 
                   status = "primary", 
                   leafletOutput("map_covid"),
-                  width = 10)
-              #  checkboxInput("datatype", label = "Absolute numbers or by population?",
-              #   choices = c("Absolute Numbers", "By Population"),
-              #  selected = "By Population"))
+                  width = 10,
+                  selectInput("datatype", label = "Absolute numbers or by population?",
+                    choices = c("Absolute Numbers" = "abs", "Per Capita" = "cap"),
+                    selected = "cap"))
       ),
       
       tabItem(tabName = "corr",
@@ -90,7 +90,7 @@ ui <- dashboardPage(
                   status = "primary", 
                   plotOutput("corr"),
                   width = 10,
-                  selectInput("cases_or_deaths", label = "Confirmed Cases or Deaths",
+                  selectInput("cases_or_deaths", label = "Confirmed Cases or Deaths Per Capita",
                               choices = c("Cases", "Deaths"),
                               selected = "Deaths", multiple = FALSE),
                   sliderInput("howmany", label = "Counties with at least how many cases",
@@ -142,40 +142,56 @@ server <- function(input, output) {
   comb <- st_read("covid.shp")
   pal <- colorNumeric(palette = "viridis", domain = comb$uninsured_percent)
   
-  content <- paste(
-    comb$NAME, '<br>',
-    "Confirmed Cases: ",
-    comb$Confrmd, '<br>',
-    "Deaths: ",
-    comb$Deaths)
+  content <- reactive ({
+    paste(
+    comb_reactive_2()$NAME, '<br>',
+    "Confirmed Cases", if (input$datatype == "cap") {" Per Thousand People"}, ": ",
+    round(comb_reactive_2()$cases_capita_or_not, 6), '<br>',
+    "Deaths", if (input$datatype == "cap") {" Per Thousand People"}, ": ",
+    round(comb_reactive_2()$deaths_capita_or_not, 6))
+  })
   
   output$map_covid <- renderLeaflet({
-    comb %>%
+    comb_reactive_2() %>%
       sf::st_transform(crs = "+init=epsg:4326") %>%
       leaflet() %>%
       addProviderTiles(provider = "CartoDB.Positron") %>%
-      addPolygons(popup = content, fillColor = ~pal(unnsrd_),
+      addPolygons(popup = content(), fillColor = ~pal(unnsrd_),
                   stroke = FALSE, fillOpacity = 0.9,  smoothFactor = 0) %>%
       addLegend("bottomright", pal = pal, 
                 values = ~unnsrd_, title = "Uninsured Percentage of 18-44yrs",
                 opacity = 1)
   })
   
+  
   comb_reactive <- reactive ({ 
     comb %>%
       mutate(deaths_or_cases = case_when(
-        input$cases_or_deaths == "Cases" ~ Confrmd,
-        input$cases_or_deaths == "Deaths" ~ Deaths,
+        input$cases_or_deaths == "Cases" ~ Cnfrmd_,
+        input$cases_or_deaths == "Deaths" ~ Dths_cp,
+      )) %>%
+      filter(Confrmd > input$howmany)
+  })
+  
+  comb_reactive_2 <- reactive ({ 
+    comb %>%
+      mutate(cases_capita_or_not = case_when(
+        input$datatype == "abs" ~ Confrmd,
+        input$datatype == "cap" ~ Cnfrmd_
+      )) %>%
+      mutate(deaths_capita_or_not = case_when(
+        input$datatype == "abs" ~ Deaths,
+        input$datatype == "cap" ~ Dths_cp
       )) %>%
       filter(Confrmd > input$howmany)
   })
   
   output$corr <- renderPlot({
     
-    ggplot(data = comb_reactive(), mapping = aes(x = unnsrd_, y = deaths_or_cases)) +
+    ggplot(data = comb_reactive(), mapping = aes(x = unnsrd_, y = log(deaths_or_cases))) +
       geom_point(alpha = 0.7) +
       xlab("Uninsured Percentage") +
-      ylab(input$cases_or_deaths) +
+      ylab(glue("Log ", input$cases_or_deaths, " Per Thousand People")) +
       geom_smooth(method = "lm")
   })
 }

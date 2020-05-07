@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 api_key <- "e20f7e545ee9474d9d353d401cc0e1d00d31deeb"
 ```
 
-#Getting insurancea
+#Getting insurance
 ```{r, warning=FALSE}
 library(tidycensus)
 library(tidyverse)
@@ -76,6 +76,10 @@ total_pop <- as.data.frame(total_pop) %>%
   rename("total_pop"=estimate)
 insurance <-  inner_join(insurance, total_pop, by = c("NAME" = "NAME"))
 comb <- inner_join(insurance, covid_county, by = c("NAME" = "Countyname"))
+
+comb <- comb %>%
+  mutate(Confirmed_cap = (Confirmed / total_pop.x) * 1000, Deaths_cap = (Deaths / total_pop.y)*1000)
+
 st_write(comb, "covid.shp")
 ```
 
