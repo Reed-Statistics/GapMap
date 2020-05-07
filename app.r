@@ -17,8 +17,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Introduction", tabName = "introduction", icon = icon("dashboard")),
-      menuItem("US Health Insurance", tabName = "health", icon = icon("hospital")),
-      menuItem("US COVID19", tabName = "covid", icon = icon("ambulance")),
+      menuItem("US COVID19 & Health Insurance", tabName = "covid", icon = icon("ambulance")),
       menuItem("Correlation", tabName = "corr", icon = icon("chart-line")),
       menuItem("More Readings and Sources", tabName = "readings", icon = icon("newspaper")),
       menuItem("Source code", tabName="source", icon = icon("file-code-o"))
@@ -68,28 +67,23 @@ ui <- dashboardPage(
                   )
                   ),
       
-      tabItem(tabName = "health",
-              h2("hell0")
-              
-      ),
-      
       tabItem(tabName = "covid",
-              h1("US COVID-19"),
+              h2("US COVID19 and Health Insurance Coverage", align="center"),
               box(title = "COVID-19 Cases and Health Insurance Coverage in US Counties", 
                   status = "primary", 
                   leafletOutput("map_covid"),
-                  width = 10,
+                  width = 20,
                   selectInput("datatype", label = "Absolute numbers or by population?",
                     choices = c("Absolute Numbers" = "abs", "Per Capita" = "cap"),
                     selected = "cap"))
       ),
       
       tabItem(tabName = "corr",
-              h1("Correlation"),
+              h3("Relationship between the US COVID19 & Health Insurance Coverage", align="center"),
               box(title = "COVID-19 Cases and Deaths versus Health Insurance Coverage in US Counties", 
                   status = "primary", 
                   plotOutput("corr"),
-                  width = 10,
+                  width = 20,
                   selectInput("cases_or_deaths", label = "Confirmed Cases or Deaths Per Capita",
                               choices = c("Cases", "Deaths"),
                               selected = "Deaths", multiple = FALSE),
