@@ -1,1 +1,2 @@
 # GapMap
+We created a shiny app called GapMap where we can explore the relationship between the severity(number of confirmed cases and deaths) of COVID19 and the health insurance coverage in the US. User can look into a direct correlation graph or look at a spatial map/representation of the correlation. User can also access the code by clicking at the source code tab. The sources used for the app are cited are included in a seperate file called Citation.  
