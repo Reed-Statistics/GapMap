@@ -139,10 +139,10 @@ server <- function(input, output) {
   content <- reactive ({
     paste(
     comb_reactive_2()$NAME, '<br>',
-    "Confirmed Cases", if (input$datatype == "cap") {" Per Thousand People"}, ": ",
-    round(comb_reactive_2()$cases_capita_or_not, 6), '<br>',
-    "Deaths", if (input$datatype == "cap") {" Per Thousand People"}, ": ",
-    round(comb_reactive_2()$deaths_capita_or_not, 6))
+    "Confirmed Cases", if (input$datatype == "cap") {" Per Million People"}, ": ",
+    round(comb_reactive_2()$cases_capita_or_not), '<br>',
+    "Deaths", if (input$datatype == "cap") {" Per Million People"}, ": ",
+    round(comb_reactive_2()$deaths_capita_or_not))
   })
   
   output$map_covid <- renderLeaflet({
@@ -176,8 +176,7 @@ server <- function(input, output) {
       mutate(deaths_capita_or_not = case_when(
         input$datatype == "abs" ~ Deaths,
         input$datatype == "cap" ~ Dths_cp
-      )) %>%
-      filter(Confrmd > input$howmany)
+      ))
   })
   
   output$corr <- renderPlot({
@@ -185,7 +184,7 @@ server <- function(input, output) {
     ggplot(data = comb_reactive(), mapping = aes(x = unnsrd_, y = log(deaths_or_cases))) +
       geom_point(alpha = 0.7) +
       xlab("Uninsured Percentage") +
-      ylab(glue("Log ", input$cases_or_deaths, " Per Thousand People")) +
+      ylab(glue("Log ", input$cases_or_deaths, " Per Million People")) +
       geom_smooth(method = "lm")
   })
 }
