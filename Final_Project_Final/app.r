@@ -101,26 +101,26 @@ code used to built the app is in the Source code tab.")
                     "For further readings on the topic, please check out the following sources:",
                     tags$ul(
                       tags$li(HTML(paste0(tags$a(href = "https://www.vox.com/policy-and-politics/2020/3/16/21173766/coronavirus-covid-19-us-cases-health-care-systemc", "Coronavirus is exposing all of the weaknesses in the US health system", target = "_blank")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://www.latimes.com/opinion/story/2020-04-16/coronavirus-health-insurance-unemployment", "COVID-19 has broken the U.S. health system. Now what?", target = "_blank")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://www.latimes.com/opinion/story/2020-04-16/coronavirus-health-insurance-unemployment", "COVID-19 has broken the U.S. health system. Now what?", target = "_blank", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.theguardian.com/commentisfree/2020/mar/27/coronavirus-pandemic-americans-health-insurance", "Millions of Americans are about to lose their health insurance in a pandemic")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.theguardian.com/commentisfree/2020/mar/21/medicare-for-all-coronavirus-covid-19-single-payer", "America's extreme neoliberal healthcare system is putting the country at risk", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.nytimes.com/2020/04/14/opinion/sunday/covid-inequality-health-care.html", "America Can Afford a World-Class Health System. Why Don’t We Have One?", target = "_blank")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://www.commonwealthfund.org/publications/podcast/2020/mar/coronavirus-reveals-flaws-us-health-system", "Coronavirus Reveals Flaws in the U.S. Health System")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://www.commonwealthfund.org/publications/podcast/2020/mar/coronavirus-reveals-flaws-us-health-system", "Coronavirus Reveals Flaws in the U.S. Health System", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.forbes.com/sites/patriciagbarnes/2020/03/20/on-the-frontlines-of-covid-19-with-no-health-insurance/#2cdb42be2570", "On The Frontlines Of COVID-19 With No Health Insurance", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.marketwatch.com/story/lost-your-job-based-health-insurance-during-the-coronavirus-pandemic-heres-how-to-get-coverage-2020-04-04", "Did you lose your job and your health insurance due to coronavirus?", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.healthcaredive.com/news/covid-19-puts-unprecedented-strain-on-us-health-system/574275/", "COVID-19 puts unprecedented strain on US health system")))),
                       tags$li(HTML(paste0(tags$a(href = "https://time.com/5810260/coronavirus-will-have-long-lasting-impacts-on-the-u-s-health-care-system-and-the-poorest-will-suffer-most/", "Coronavirus Will Have Long-Lasting Impacts on the U.S. Health Care System—And the Poorest Will Suffer Most", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://promarket.org/americas-broken-health-care-system-is-the-biggest-obstacle-to-containing-the-coronavirus/", "America’s Broken Health Care System Is the Biggest Obstacle to Containing the Coronavirus", target = "_blank")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://qz.com/1809382/us-health-care-costs-could-help-coronavirus-spread/", "The cost of American health care could help coronavirus spread in the US")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://newrepublic.com/article/157101/health-insurance-crisis-coronavirus", "The Health Insurance Crisis at Our Doorstep")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://qz.com/1809382/us-health-care-costs-could-help-coronavirus-spread/", "The cost of American health care could help coronavirus spread in the US", target = "_blank")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://newrepublic.com/article/157101/health-insurance-crisis-coronavirus", "The Health Insurance Crisis at Our Doorstep", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.usnews.com/news/health-news/articles/2020-04-01/as-unemployment-and-covid-19-cases-rise-who-will-pay-for-care", "As Unemployment and COVID-19 Cases Rise, Who Will Pay for Care?", target = "_blank")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://www.marcumllp.com/insights/impact-of-covid-19-on-the-health-insurance-industry", "Impact of COVID-19 on the health Insurance Industry")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://abcnews.go.com/Health/make-covid-19-tests-treatment-easy-access-black/story?id=70048090", "Black Americans 'epicenter' of coronavirus crisis made worse by lack of insurance")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://www.marcumllp.com/insights/impact-of-covid-19-on-the-health-insurance-industry", "Impact of COVID-19 on the health Insurance Industry", target = "_blank")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://abcnews.go.com/Health/make-covid-19-tests-treatment-easy-access-black/story?id=70048090", "Black Americans 'epicenter' of coronavirus crisis made worse by lack of insurance", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.institutmontaigne.org/en/blog/how-covid-19-unveiling-us-healthcare-weaknesses", "How Covid-19 is Unveiling US Healthcare Weaknesses", target = "_blank")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://www.medicaleconomics.com/news/coronavirus-new-report-shows-grim-view-health-insurance-loss", "Coronavirus: New report shows grim view of health insurance loss")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://www.cnn.com/2020/03/11/us/us-health-care-system-coronavirus/index.html", "Here's how the US health care system makes it harder to stop coronavirus")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://www.medicaleconomics.com/news/coronavirus-new-report-shows-grim-view-health-insurance-loss", "Coronavirus: New report shows grim view of health insurance loss", target = "_blank")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://www.cnn.com/2020/03/11/us/us-health-care-system-coronavirus/index.html", "Here's how the US health care system makes it harder to stop coronavirus", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://pnhp.org/news/surprise-medical-bills-coronavirus-and-bad-insurance-3-arguments-for-medicare-for-all/", "COVID-19 and Medicare for All", target = "_blank")))),
-                      tags$li(HTML(paste0(tags$a(href = "https://www.axios.com/coronavirus-health-care-costs-medical-bills-9ee15bd0-ed92-449c-8c17-f7d13a9a6aea.html", "Coronavirus could expose the worst parts of the U.S. health system")))),
+                      tags$li(HTML(paste0(tags$a(href = "https://www.axios.com/coronavirus-health-care-costs-medical-bills-9ee15bd0-ed92-449c-8c17-f7d13a9a6aea.html", "Coronavirus could expose the worst parts of the U.S. health system", target = "_blank")))),
                       tags$li(HTML(paste0(tags$a(href = "https://www.al.com/news/2020/04/alabama-uninsured-patients-with-most-severe-covid-19-cases-could-face-huge-bills-possible-bankruptcy.html", "Alabama uninsured patients with most severe COVID-19 cases could face huge bills, possible bankruptcy"))))
                     )
                   )
@@ -129,7 +129,7 @@ code used to built the app is in the Source code tab.")
               tags$h1(
                 align="left",
                 style="padding: 2px",
-                HTML(paste0(tags$a(href = "https://github.com/Reed-Statistics/GapMap","View Code")))
+                HTML(paste0(tags$a(href = "https://github.com/Reed-Statistics/GapMap","View Code", target = "_blank")))
               ))
                 )
     
@@ -141,6 +141,7 @@ server <- function(input, output) {
   comb <- st_read("covid.shp")
   pal <- colorNumeric(palette = "viridis", domain = comb$uninsured_percent)
   
+  #Reactive content for Leaflet
   content <- reactive ({
     paste(
     comb_reactive_2()$NAME, '<br>',
@@ -162,7 +163,7 @@ server <- function(input, output) {
                 opacity = 1)
   })
   
-  
+  #reactive dataframe for correlation
   comb_reactive <- reactive ({ 
     comb %>%
       mutate(deaths_or_cases = case_when(
@@ -172,6 +173,7 @@ server <- function(input, output) {
       filter(Confrmd > input$howmany)
   })
   
+  #reactive dataframe for leaflet
   comb_reactive_2 <- reactive ({ 
     comb %>%
       mutate(cases_capita_or_not = case_when(

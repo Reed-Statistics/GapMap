@@ -1,0 +1,126 @@
+---
+title: "Final Project"
+author: "Shisham Adhikari and Jacob Goldsmith"
+insurancee: "5/1/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, eval=TRUE}
+api_key <- "e20f7e545ee9474d9d353d401cc0e1d00d31deeb"
+```
+
+#Getting insurance
+```{r, warning=FALSE}
+library(tidycensus)
+library(tidyverse)
+library(leaflet)
+library(glue)
+library(ggplot2)
+library(dplyr)
+library(sf)
+
+#get health insurance data from TidyCensus
+insurance10 <- get_acs("county", 
+                 table = "B27001",
+                 year = 2018, 
+                 output = "tidy", 
+                 state = NULL, 
+                 geometry = TRUE, 
+                 shift_geo =TRUE,
+                  key = api_key, 
+                  cache_table = TRUE)
+
+#Get population data from TidyCensus
+total_pop <- get_acs("county", 
+                 table = "B01003",
+                 year = 2018, 
+                 output = "tidy", 
+                 state = NULL, 
+                 geometry = TRUE, 
+                 shift_geo =TRUE,
+                  key = api_key, 
+                  cache_table = TRUE)
+
+```
+
+```{r}
+library(tidyr)
+
+#constructing coverage var
+insurance <- mutate(insurance10,
+  req = case_when(
+    variable %in% paste0("B27001_0",
+      c("09","12","15","37","40","43")) ~ "pop18_44",
+    variable %in% paste0("B27001_0",
+      c("11","14","17","39","42","45")) ~ "pop1844uni")) %>%
+  filter(!is.na(req))
+```
+
+```{r}
+#summarize insurance coverage by county
+insurance <- group_by(insurance, GEOID, NAME, req) %>%
+  summarize(estimate = sum(estimate)) %>%
+  ungroup() %>%
+  tidyr::spread(req, estimate) 
+
+#get uninsured percent from raw numbers
+insurance <- mutate(insurance, uninsured_percent = (pop1844uni/pop18_44) * 100) %>%
+  select(-c(pop18_44, pop1844uni)) 
+```
+
+```{r}
+#Get Covid data from https://github.com/govex/COVID-19/tree/master/data_tables
+covid_county <- read_csv("https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/JHU_USCountymap/df_Counties2020.csv")
+covid_county <- covid_county %>%
+  filter(dt == "2020-05-04") %>%
+  mutate(Countyname = glue('{Countyname} County, {ST_Name}')) #making the names match between dataframes
+total_pop <- as.data.frame(total_pop) %>% #making joins possible by stripping geometry from LHS
+  select(-geometry,-moe,-variable,-GEOID) %>%
+  rename("total_pop"=estimate)
+insurance <-  inner_join(insurance, total_pop, by = c("NAME" = "NAME"))
+comb <- inner_join(insurance, covid_county, by = c("NAME" = "Countyname"))
+
+comb <- comb %>% #deaths per million
+  mutate(Confirmed_cap = (Confirmed / total_pop) * 1000000, Deaths_cap = (Deaths / total_pop)*1000000)
+
+st_write(comb, "covid.shp") #write simple shape file
+```
+
+```{r}
+library(viridis)
+library(leaflet.extras)
+pal <- colorNumeric(palette = "viridis", domain = comb$uninsured_percent)
+
+content <- paste(
+  comb$NAME, '<br>',
+  "Confirmed Cases: ",
+  comb$Confirmed_cap, '<br>',
+  "Deaths: ",
+  comb$Deaths_cap)
+  
+#minimal viable product Leaflet
+comb %>%
+  sf::st_transform(crs = "+init=epsg:4326") %>%
+  leaflet() %>%
+   addProviderTiles(provider = "CartoDB.Positron") %>%
+  addPolygons(popup = content, fillColor = ~pal(uninsured_percent),
+              stroke = FALSE, fillOpacity = 0.9,  smoothFactor = 0) %>%
+  addLegend("bottomright", pal = pal, 
+            values = ~uninsured_percent, title = "Uninsured Percentage of 18-44yrs",
+            opacity = 1)
+```
+```{r}
+#minimal viable product correlation
+comb %>%
+  filter(Confrmd > 10) %>%
+ggplot(mapping = aes(x = unnsrd_, y = Deaths)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm")
+```
+
